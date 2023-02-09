@@ -1058,6 +1058,11 @@ bool FileUtils::isDirectoryExist(const std::string& dirPath) const
     return false;
 }
 
+// android doesn't have ftw.h
+#if (CC_TARGET_PLATFORM != CC_PLATFORM_ANDROID)
+#include <ftw.h>
+#endif
+
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
 // windows os implement should override in platform specific FileUtiles class
 bool FileUtils::isDirectoryExistInternal(const std::string& dirPath) const
@@ -1187,6 +1192,21 @@ bool FileUtils::createDirectory(const std::string& path)
     return true;
 }
 
+namespace
+{
+#if (CC_TARGET_PLATFORM != CC_PLATFORM_ANDROID)
+    int unlink_cb(const char *fpath, const struct stat *sb, int typeflag, struct FTW *ftwbuf)
+    {
+        int rv = remove(fpath);
+
+        if (rv)
+            perror(fpath);
+
+        return rv;
+    }
+#endif
+}
+
 bool FileUtils::removeDirectory(const std::string& path)
 {
     if (path.size() > 0 && path[path.size() - 1] != '/')
@@ -1195,13 +1215,20 @@ bool FileUtils::removeDirectory(const std::string& path)
         return false;
     }
 
-    std::string command = "rm -r ";
-    // Path may include space.
-    command += "\"" + path + "\"";
-    if (system(command.c_str()) >= 0)
-        return true;
-    else
-        return false;
+    #if (CC_TARGET_PLATFORM != CC_PLATFORM_ANDROID)
+        if (nftw(path.c_str(), unlink_cb, 64, FTW_DEPTH | FTW_PHYS) == -1)
+            return false;
+        else
+            return true;
+    #else
+        std::string command = "rm -r ";
+        // Path may include space.
+        command += "\"" + path + "\"";
+        if (system(command.c_str()) >= 0)
+            return true;
+        else
+            return false;
+    #endif // (CC_TARGET_PLATFORM != CC_PLATFORM_ANDROID)
 }
 
 bool FileUtils::removeFile(const std::string &path)
