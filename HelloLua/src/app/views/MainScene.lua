@@ -12,6 +12,8 @@ function MainScene:onCreate()
         :move(display.cx, display.cy + 200)
         :addTo(self)
 
+
+    
 end
 
 return MainScene
