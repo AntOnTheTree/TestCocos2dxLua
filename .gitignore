@@ -4,3 +4,7 @@ xcuserdata/
 DerivedData/
 
 frameworks/runtime-src/proj.android-studio/.idea/
+
+frameworks/cocos2d-x/build/
+frameworks/cocos2d-x/cocos/platform/android/libcocos2dx/build/
+frameworks/runtime-src/proj.android-studio/app/build/
