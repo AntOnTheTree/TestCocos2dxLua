@@ -6,8 +6,10 @@ import com.loopj.android.http.BinaryHttpResponseHandler;
 import com.loopj.android.http.FileAsyncHttpResponseHandler;
 import com.loopj.android.http.RequestHandle;
 
-import org.apache.http.Header;
-import org.apache.http.message.BasicHeader;
+//import org.apache.http.Header;
+//import org.apache.http.message.BasicHeader;
+import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.message.BasicHeader;
 
 import java.io.File;
 import java.util.*;
@@ -58,6 +60,11 @@ class DataTaskHandler extends BinaryHttpResponseHandler {
         LogD("onSuccess(i:" + i + " headers:" + headers);
         _downloader.onFinish(_id, 0, null, binaryData);
     }
+
+//    @Override
+//    public void onSuccess(int i, Header[] headers, byte[] bytes) {
+//
+//    }
 }
 
 class FileTaskHandler extends FileAsyncHttpResponseHandler {
